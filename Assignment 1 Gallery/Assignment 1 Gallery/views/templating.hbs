@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wezley's Gallery</title>
+</head>
+<body>
+    <h1>Wezley Telemaques Gallery</h1>
+    <h2>
+    <div id="user-info">
+        Logged in as..."<a href="/logout">{{ username }}</a>": Click to Logout
+    </div>
+    </h2>
+    <h3>Pictures</h3>
+    <form action="/" method="get">
+        {{#each picNames}}
+          <input type="radio" name="pics" value="{{this}}" />
+          <label>{{this}}</label>
+          <br>
+        {{/each}}
+        <button type="submit">Submit</button>
+    </form>
+    <div id="pic-container">
+        <img id="display" src="default.jpg" alt="Default Image" />
+    </div>
+    <script>
+        const form = document.querySelector('form');
+        const display = document.getElementById('display');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+            const selectedImage = formData.get('pics');
+
+            if (selectedImage) {
+                try {
+                    const response = await fetch(`/AllPics/${selectedImage}`);
+                    if (!response.ok) {
+                        throw new Error('Image not found');
+                    }
+                    const imageUrl = await response.url;
+                    display.src = imageUrl;
+                } catch (error) {
+                    console.error(error);
+                    display.src = '/Pictures/default.jpg';
+                }
+            } else {
+                display.src = '/Pictures/default.jpg';
+            }
+        });
+    </script>
+</body>
+</html>
+
+
